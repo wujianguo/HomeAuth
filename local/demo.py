@@ -27,8 +27,8 @@ stdlog=logging.getLogger("stdlog")
 from dropbox import client,rest,session
 from datetime import datetime
 import webbrowser,sys,time,tempfile
-APP_KEY='d6f5yzu2f45eydr'
-APP_SECRET='ah3uohrf90ls6a7'
+APP_KEY=''
+APP_SECRET=''
 ACCESS_TYPE='app_folder'
 
 
