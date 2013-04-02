@@ -1,0 +1,18 @@
+﻿<html>
+    <head>
+        <title>remote cmd</title>
+    </head>
+    <body>
+        <h1 align="center">remote cmd</h1>
+		{{remotecmd.user.username}}<br>
+		{% if ok %}
+			<p>ok</p>
+         {% endif %}
+        <form action="." method="post">{% csrf_token %}
+			<input type="text" name="camera_cmd" />
+			<input type="text" name="screen_cmd" />
+			<input type="text" name="audio_out_cmd" />
+			<input type="submit" value="Submit" />
+        </form>
+    </body>
+</html>
