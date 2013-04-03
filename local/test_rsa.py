@@ -18,7 +18,7 @@ def certify():
     signature=privkey.sign(text,'')
     print(pubkey.verify(text,signature))
 def testHomeauth():
-    f = requests.get('http://localhost:8000/static/key/id_rsa.pub')
+    f = requests.get('http://homeauth-lsjustin.dotcloud.com/static/key/id_rsa.pub')
     pub = f.text
 #    print(pub)
     pubkey = RSA.importKey(pub)
@@ -32,7 +32,7 @@ def testHomeauth():
 #    para=({'signature':'d','userinfo':'a'})
     urllib.urlencode(para)
 #    print(para)
-    r = requests.post('http://127.0.0.1:8000/handlecmd/getcmd/',data=para)
+    r = requests.post('http://homeauth-lsjustin.dotcloud.com/handlecmd/getcmd/',data=para)
 
     s=r.json()
     print(s)

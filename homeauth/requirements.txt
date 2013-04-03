@@ -17,4 +17,4 @@ South
 django-userena
 
 # Crypto
-Crypto
+https://ftp.dlitz.net/pub/dlitz/crypto/pycrypto/pycrypto-2.6.tar.gz

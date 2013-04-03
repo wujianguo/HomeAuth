@@ -1,7 +1,9 @@
 www:
   type: python
-db:
-  type: postgresql
-environment:
+  config:
+    python_version: v2.7
+  environment:
     GMAIL_USER: robot@wujianguo.org
     GMAIL_PASSWORD: robotwujianguo
+db:
+  type: postgresql

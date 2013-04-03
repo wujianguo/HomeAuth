@@ -2,7 +2,7 @@
 
 python createdb.py
 python superuser.py
-python manage.py syncdb --settings=homeauth.settings_dotcloud #--noinput
+python manage.py syncdb --settings=homeauth.settings_dotcloud --noinput
 python manage.py migrate --settings=homeauth.settings_dotcloud
 mkdir -p /home/dotcloud/data/media /home/dotcloud/volatile/static
 python manage.py collectstatic --settings=homeauth.settings_dotcloud --noinput
