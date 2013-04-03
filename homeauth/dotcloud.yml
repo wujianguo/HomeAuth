@@ -1,0 +1,7 @@
+www:
+  type: python
+db:
+  type: postgresql
+environment:
+    GMAIL_USER: robot@wujianguo.org
+    GMAIL_PASSWORD: robotwujianguo

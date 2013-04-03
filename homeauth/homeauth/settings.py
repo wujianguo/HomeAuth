@@ -170,4 +170,4 @@ TEST_RUNNER = 'django.test.simple.DjangoTestSuiteRunner'
 #import datetime
 #KEY_EXPIRE_TIMEDELTA = datetime.timedelta(hours=2)
 PRIVATE_KEY_PATH = os.path.join(PROJECT_ROOT,'private/id_rsa')
-PUBLIC_KEY_PATH = os.path.join(PROJECT_ROOT,'private/id_rsa.pub')
+#PUBLIC_KEY_PATH = os.path.join(PROJECT_ROOT,'private/id_rsa.pub')
