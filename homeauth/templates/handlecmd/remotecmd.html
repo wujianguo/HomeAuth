@@ -10,6 +10,7 @@
 		{% else %}
 			<p>error</p>
         {% endif %}
+        {{remotecmd.help_msg}}<br>
         {{remotecmd.cmdline}}<br>
         <form action="." method="post">{% csrf_token %}
 			<input type="text" name="cmdline" />
