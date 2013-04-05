@@ -7,9 +7,7 @@ from Crypto.PublicKey import RSA
 import logging
 #logging.basicConfig(level=logging.DEBUG,format='[%(levelname)s %(asctime)s line:%(lineno)d] %(message)s')
 class CmdForm(forms.Form):
-    camera_cmd = forms.CharField(widget=forms.Textarea)
-    screen_cmd = forms.CharField(widget=forms.Textarea)
-    audio_out_cmd  = forms.CharField(widget=forms.Textarea)
+    cmdline = forms.CharField(widget=forms.Textarea)
 class VerifyForm(forms.Form):
     signature = forms.CharField(widget=forms.Textarea)
     userinfo  = forms.CharField(widget=forms.Textarea)

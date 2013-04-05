@@ -10,10 +10,9 @@
 		{% else %}
 			<p>error</p>
         {% endif %}
+        {{remotecmd.cmdline}}<br>
         <form action="." method="post">{% csrf_token %}
-			<input type="text" name="camera_cmd" />
-			<input type="text" name="screen_cmd" />
-			<input type="text" name="audio_out_cmd" />
+			<input type="text" name="cmdline" />
 			<input type="submit" value="Submit" />
         </form>
     </body>

@@ -26,9 +26,7 @@ def recvcmdFromWeb(request):
     if request.method == 'POST':
         form = CmdForm(request.POST)
         if form.is_valid():
-            p.camera_cmd = form.cleaned_data['camera_cmd']
-            p.screen_cmd = form.cleaned_data['screen_cmd']
-            p.audio_out_cmd = form.cleaned_data['audio_out_cmd']
+            p.cmdline = form.cleaned_data['cmdline']
             p.last_recvcmd_time = timezone.now()
             p.new_cmd = True
             p.save()
@@ -42,7 +40,7 @@ def recvcmdFromWeb(request):
 def recvcmdFromApp(request):
     pass
 def getcmd(request):
-    rescmd = {'camera_cmd':'','screen_cmd':'','audio_out_cmd':'','new':False}
+    rescmd = {'cmdline':'','new':False}
     resmsg = {'err':'ok','response':rescmd}
     if request.method == 'POST':
         form = VerifyForm(request.POST)
@@ -54,7 +52,7 @@ def getcmd(request):
                 except RemoteCmd.DoesNotExist:
                     resmsg['err'] = 'invalid user'
                 else:
-                    rescmd.update({'camera_cmd':p.camera_cmd,'screen_cmd':p.screen_cmd,'audio_out_cmd':p.audio_out_cmd,'new':p.new_cmd})
+                    rescmd.update({'cmdline':p.cmdline,'new':p.new_cmd})
                     resmsg['response'] = rescmd
                     p.last_getcmd_time = timezone.now()
                     p.new_cmd = False
