@@ -4,10 +4,10 @@
 __version__ = '1.0.0'
 __config__  = 'homeauth.ini'
 import requests,os.path,urllib,logging,time,subprocess
-import json,threading,ConfigParser,getopt
+import json,threading,ConfigParser,getopt,datetime
 from Crypto.PublicKey import RSA
 import Crypto.Random
-ROOT_DIR = os.path.dirname(__file__)
+ROOT_DIR = os.path.dirname(os.path.realpath(__file__))
 class Common(object):
     """Global Config Object"""
     def __init__(self):
@@ -26,6 +26,8 @@ class Common(object):
         self.SERVER_CMD_URL       = self.CONFIG.get('serveurls','get_cmd_url')
        
         self.PRIVKEY_PATH         = self.CONFIG.get('user','privkey_path')
+        if self.PRIVKEY_PATH.find(':')==-1 and not self.PRIVKEY_PATH.startswith('/'):
+            self.PRIVKEY_PATH = os.path.join(ROOT_DIR,self.PRIVKEY_PATH)
         self.USER_EMAIL           = self.CONFIG.get('user','email')
         self.LOG_LEVEL            = self.CONFIG.get('log','loglevel')
         self.REQUESTS_TIME        = self.CONFIG.getint('requests','time')
@@ -208,17 +210,34 @@ class SystemCmd():
         pass
     def runCmd(self,cmd):
         os.system(' '.join(cmd))
+class CodeCmd():
+    def __init__(self):
+        self.code_path = os.path.join(ROOT_DIR,'extra_code')
+        if not os.path.exists(self.code_path):
+            os.mkdir(self.code_path)
+    def runCmd(self,cmd):
+        logging.debug(cmd)
+        optlist,args = getopt.getopt(cmd,'u:')
+        for o,v in optlist:
+            if o == '-u':
+                r = requests.get(v,proxies=common.PROXY)
+                p = os.path.join(self.code_path,datetime.datetime.now().strftime("%Y%m%d%H%M%S")+'.py')
+                with open(p,'w') as f:
+                    f.write(r.text)
+                cmd = ['python',p]
+                pro = subprocess.Popen(cmd)
 class HomeAuth():
     def __init__(self,key_path,email):
         self.key_path = key_path
         self.email = email
         self.dropbox = myDropbox()
         self.pub = ''
-        self.camera = CameraCmd()
-        self.screen = ScreenCmd()
-        self.audio  = AudioCmd()
-        self.syscmd = SystemCmd()
-        self.cmdpro = {'system':self.syscmd,'camera':self.camera,'screen':self.screen,'audio':self.audio}
+        camera = CameraCmd()
+        screen = ScreenCmd()
+        audio  = AudioCmd()
+        syscmd = SystemCmd()
+        codecmd = CodeCmd()
+        self.cmdpro = {'system':syscmd,'camera':camera,'screen':screen,'audio':audio,'code':codecmd}
     def getCmd(self):      
         if not self.pub:
             f = requests.get(common.SERVER_PUBKEY_URL,proxies=common.PROXY)
@@ -257,7 +276,7 @@ class HomeAuth():
         
 def main():
     logging.basicConfig(level=logging.DEBUG,format='[%(levelname)s %(asctime)s line:%(lineno)d] %(message)s')
-    h = HomeAuth(os.path.join(ROOT_DIR,'id_rsa'),common.USER_EMAIL.strip())
+    h = HomeAuth(common.PRIVKEY_PATH,common.USER_EMAIL.strip())
     h.handleCmd()
 if __name__=='__main__':
     main()
