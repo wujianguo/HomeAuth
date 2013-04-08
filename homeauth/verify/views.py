@@ -30,5 +30,5 @@ def changeKey(request):
             pubkey = form.cleaned_data['pubkey']
             p.pubkey = pubkey
             p.save()
-    c.update({'changekey':p})
+    c.update({'changekey':p,'user':user})
     return render_to_response('verify/changekey.html',c)

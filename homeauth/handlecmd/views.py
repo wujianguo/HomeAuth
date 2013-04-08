@@ -24,6 +24,7 @@ def recvcmdFromWeb(request):
         p = RemoteCmd(user = user)
         p.save()
     if request.method == 'POST':
+        logging.debug('post cmd')
         form = CmdForm(request.POST)
         if form.is_valid():
             p.cmdline = form.cleaned_data['cmdline']
@@ -33,9 +34,7 @@ def recvcmdFromWeb(request):
             c.update({'ok':True})
         else:
             logging.error('invalid data')
-    else:
-        logging.error('method must post')
-    c.update({'remotecmd':p})
+    c.update({'remotecmd':p,'user':user})
     return render_to_response('handlecmd/remotecmd.html',c)
 def recvcmdFromApp(request):
     pass

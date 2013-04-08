@@ -1,16 +1,16 @@
-﻿<html>
-    <head>
-        <title>changekey</title>
-    </head>
-    <body>
-        <h1 align="center">Certification Center</h1>
-		{{changekey.user.username}}<br>
-		{{changekey.pubkey}}
-		
+﻿
+{% extends 'userena/base_userena.html' %}
+{% load i18n %}
+{% load url from future %}
+
+{% block title %}{% trans "Change Key" %}{% endblock %}
+
+{% block content %}
+		<p>{{changekey.pubkey}}<br></p>
         <form action="." method="post">{% csrf_token %}
 			<h3>public key</h3>
-            <textarea name=pubkey  rows=30 cols=60></textarea>
+            <textarea name=pubkey cols="40" rows="20"></textarea>
             <input type=submit value="new Key">
         </form>
-    </body>
-</html>
+
+{% endblock %}
