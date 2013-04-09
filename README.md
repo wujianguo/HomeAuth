@@ -1,16 +1,15 @@
 Home Authmation
 =========
 
-<http://homeauth-lsjustin.dotcloud.com>
-HomeAuth, receive commands from server and then do what you want according the command. So no matter where you are, you can control your home just with a webbrowser.
+[HomeAuth](http://homeauth-lsjustin.dotcloud.com), receive commands from server and then do what you want according the command. So no matter where you are, you can control your home just with a webbrowser.
 
   - Register an account.
-  - Use <https://github.com/wujianguo/tools/blob/master/generate_rsa.py> to generate keys.
-  - Copy the contents of the id_rsa.pub file to <http://homeauth-lsjustin.dotcloud.com/verify/>.
+  - Use [this](https://github.com/wujianguo/tools/blob/master/generate_rsa.py) to generate keys.
+  - Copy the contents of the id_rsa.pub file to [here](http://homeauth-lsjustin.dotcloud.com/verify/).
   - Run your script with the private key you generate.
-  - Send your command from <http://homeauth-lsjustin.dotcloud.com/handlecmd/web>.
+  - Send your command [here](http://homeauth-lsjustin.dotcloud.com/handlecmd/web).
 
-You can try this <https://github.com/wujianguo/HomeAuth/blob/master/local/homeauth.py> to receive command and do whatever things you want
+You can try [this](https://github.com/wujianguo/HomeAuth/blob/master/local/homeauth.py) to receive command and do whatever things you want
 
 Version
 -
