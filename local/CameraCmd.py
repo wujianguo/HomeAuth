@@ -4,5 +4,5 @@
 class CameraCmd():
     def __init__(self):
         pass
-    def runcmd(self,cmd):
+    def runCmd(self,cmd):
         pass

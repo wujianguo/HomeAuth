@@ -62,7 +62,7 @@ class CloudDir():
             return False
         stdlog.info("url:"+url)
         CloudDir.id = ''.join(random.sample(string.ascii_letters,4))
-        if self.send_mail('dropbox','id:'+CloudDir.id+' url:'+url):
+        if self.send_mail('dropbox','clouddir -i '+CloudDir.id+' url:'+url):
             stdlog.debug('send_mail ok')
             return True
         else:
@@ -79,7 +79,7 @@ class CloudDir():
                 self.reset()
     def send_mail(self,subject,msg_content):
         m = MySmtp.EmailBackend(EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD, EMAIL_USE_TLS)
-        return m.send_messages(RECV_MSG_EMAIL, subject,msg_content)
+        return m.send_messages(RECV_MSG_EMAIL, subject, msg_content)
     def quotapercent(self):
         infos = CloudDir.cl.account_info()
         usedbytes = infos['quota_info']['shared']+infos['quota_info']['normal']
