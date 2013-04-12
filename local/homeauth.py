@@ -12,7 +12,7 @@ import Crypto.Random
 from settings import *
 import CameraCmd
 import ScreenCmd
-import AudioCmd
+import AudioPlayer
 import SystemCmd
 import CodeCmd
 import CloudDir
@@ -24,7 +24,7 @@ class HomeAuth():
         self.log = logging.getLogger('cmd')
         camera = CameraCmd.CameraCmd()
         screen = ScreenCmd.ScreenCmd()
-        audio  = AudioCmd.AudioCmd()
+        audio  = AudioPlayer.AudioCmd()
         syscmd = SystemCmd.SystemCmd()
         codecmd = CodeCmd.CodeCmd()
         clouddir = CloudDir.CloudDir()
