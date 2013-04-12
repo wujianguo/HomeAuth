@@ -81,6 +81,3 @@ class EmailBackend():
             if new_conn_created:
                 self.close()
         return send_ok
-#if __name__=='__main__':
-#    m = EmailBackend('smtp.gmail.com',587,'robot@wujianguo.org','robotwujianguo',True)
-#    m.send_messages('lsjustin89@gmail.com','this is subject','hello world')
