@@ -38,7 +38,12 @@ class CloudDir():
             return
         stdlog.debug('start upload')
         with open(localfile,'rb') as f:
-            CloudDir.cl.put_file(cloudfile,f)
+            try:
+                CloudDir.cl.put_file(cloudfile,f)
+            except Exception,data:
+                stdlog.error(data)
+            else:
+                stdlog.debug('upload ok')
     def createDirs(self,dirs):
         m = CloudDir.cl.metadata('/')
         exist_dirs = []

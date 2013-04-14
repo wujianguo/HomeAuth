@@ -23,6 +23,9 @@ class Monitor(threading.Thread):
         self.close = False
         self.cam = cv.CaptureFromCAM(0)
     def run(self):
+        log.info('run')
+        time.sleep(SIMILARITYLIMIT)
+        self.close = False
         pic1 = self.takePhoto()
         CloudDir.CloudDir.saveFile(pic1,os.path.join(CloudDir.CloudDir.camera,os.path.basename(pic1)))
         while not self.close:
@@ -36,6 +39,7 @@ class Monitor(threading.Thread):
                 CloudDir.CloudDir.saveFile(pic2,os.path.join(CloudDir.CloudDir.camera,os.path.basename(pic2)))
                 pic1 = pic2
                 AudioPlayer.AudioCmd.runCmd(['-p','1'])
+        del(self.cam)
     def terminate(self):
         self.close = True
     def takePhoto(self):
