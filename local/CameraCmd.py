@@ -16,7 +16,7 @@ except:
     cv = None
 from settings import *
 INTERVALTIME = 1
-SIMILARITYLIMIT = 0.91
+SIMILARITYLIMIT = 0.98
 class Monitor(threading.Thread):
     def __init__(self):
         super(Monitor, self).__init__()
@@ -24,7 +24,8 @@ class Monitor(threading.Thread):
         self.cam = cv.CaptureFromCAM(0)
     def run(self):
         log.info('run')
-        time.sleep(SIMILARITYLIMIT)
+        self.takePhoto()
+        time.sleep(10)
         self.close = False
         pic1 = self.takePhoto()
         CloudDir.CloudDir.saveFile(pic1,os.path.join(CloudDir.CloudDir.camera,os.path.basename(pic1)))
@@ -45,7 +46,7 @@ class Monitor(threading.Thread):
     def takePhoto(self):
         try:
             feed=cv.QueryFrame(self.cam)
-            cv.WaitKey(INTERVALTIME)
+#            cv.WaitKey(INTERVALTIME)
             cam_pic = os.path.join(CAMERA_DIR,datetime.datetime.now().strftime("%Y%m%d%H%M%S")+'.jpg')
             cv.SaveImage(cam_pic,feed)
         except Exception,data:
