@@ -6,3 +6,5 @@ class SystemCmd():
         pass
     def runCmd(self,cmd):
         os.system(' '.join(cmd))
+    def terminate(self):
+        pass

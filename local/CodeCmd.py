@@ -20,3 +20,5 @@ class CodeCmd():
                     f.write(r.text)
                 cmd = ['python',p]
                 pro = subprocess.Popen(cmd)
+    def terminate(self):
+        pass

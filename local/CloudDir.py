@@ -85,4 +85,7 @@ class CloudDir():
         usedbytes = infos['quota_info']['shared']+infos['quota_info']['normal']
         quota = infos['quota_info']['quota']
         return 1.0*usedbytes/quota
+    @staticmethod
+    def terminate():
+        pass
         

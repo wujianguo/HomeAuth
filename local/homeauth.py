@@ -64,7 +64,11 @@ class HomeAuth():
                         self.log.error(data)
                 t = REQUESTS_TIME.total_seconds()
             finally:
-                time.sleep(t)
+                try:
+                    time.sleep(t)
+                except:
+                    for i in self.cmdpro:
+                        self.cmdpro[i].terminate()
 def main():
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
     h = HomeAuth(USER_PRIVKEY_PATH, USER_EMAIL.strip())
