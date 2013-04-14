@@ -45,7 +45,7 @@ class Monitor(threading.Thread):
     def takePhoto(self):
         try:
             feed=cv.QueryFrame(self.cam)
-            cv.WaitKey(100)
+            cv.WaitKey(INTERVALTIME)
             cam_pic = os.path.join(CAMERA_DIR,datetime.datetime.now().strftime("%Y%m%d%H%M%S")+'.jpg')
             cv.SaveImage(cam_pic,feed)
         except Exception,data:
