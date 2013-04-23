@@ -24,3 +24,5 @@ class ScreenCmd():
             img.save(img_path)
             return img_path
         return ''
+    def terminate(self):
+        pass
