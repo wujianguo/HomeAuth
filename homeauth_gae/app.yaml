@@ -1,0 +1,27 @@
+application: wjghomeauth
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: true
+
+handlers:
+- url: /static
+  static_dir: static
+
+- url: /
+  script: index.app
+  login: required
+
+- url: /pubkey
+  script: pubkey.app
+  login: required
+
+- url: /recvcmd
+  script: recvcmd.app
+
+libraries:
+- name: pycrypto
+  version: latest
+
+- name: jinja2
+  version: latest

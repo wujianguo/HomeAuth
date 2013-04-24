@@ -1,0 +1,14 @@
+﻿
+{% extends 'base.html' %}
+
+{% block title %}Change Key{% endblock %}
+
+{% block content %}
+		<p>{{key.pubkey}}<br></p>
+        <form action="/pubkey" method="post">
+			<h3>public key</h3>
+            <textarea name=pubkey cols="40" rows="20"></textarea>
+            <input type=submit value="new Key">
+        </form>
+
+{% endblock %}
