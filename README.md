@@ -6,7 +6,7 @@ Home Authmation
   - Register an account.
   - Use [this](https://github.com/wujianguo/tools/blob/master/generate_rsa.py) to generate keys.
   - Copy the contents of the id_rsa.pub file to [here](http://ha.wujianguo.org/pubkey).
-  - Run your script with the private key you generate.
+  - Run your script with the private key you generated to receive your command [here](http://ha.wujianguo.org/recvcmd) and do something.
   - Send your command [here](http://ha.wujianguo.org/newcmd).
 
 You can try [this](https://github.com/wujianguo/HomeAuth/blob/master/local/homeauth.py) to receive command and do whatever things you want
@@ -14,10 +14,10 @@ You can try [this](https://github.com/wujianguo/HomeAuth/blob/master/local/homea
 Version
 -
 
-1.1
+2.0
 
 
 
-[django]: http://daringfireball.net/
+[django]: https://www.djangoproject.com/
 [Twitter Bootstrap]: http://twitter.github.io/bootstrap/
 [google appengine]: https://developers.google.com/appengine/
