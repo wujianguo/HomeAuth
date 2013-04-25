@@ -33,9 +33,15 @@ class MainPage(webapp2.RequestHandler):
             userinfo.pubkey=self.request.get('pubkey')
             userinfo.put()
        	else:
-            newuser=keymodel.PubKeys(user=user,pubkey=self.request.get('pubkey'))
-            newuser.put()
-       	self.redirect('/pubkey')
+            userinfo=keymodel.PubKeys(user=user,pubkey=self.request.get('pubkey'))
+            userinfo.put()
+        template_values = {
+            'user': user,
+            'key':userinfo,
+        }
+        template = JINJA_ENVIRONMENT.get_template('pubkey.html')
+        self.response.write(template.render(template_values))
+#       	self.redirect('/pubkey')
 
 app=webapp2.WSGIApplication([('/pubkey',MainPage)],
                             debug=True)

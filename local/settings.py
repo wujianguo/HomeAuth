@@ -23,8 +23,8 @@ PROXY_USER = ''
 PROXY_PAWD = ''
 
 #serveurls
-ID_RSA_PUB = 'http://homeauth-lsjustin.dotcloud.com/static/key/id_rsa.pub'
-GET_CMD_URL = 'http://homeauth-lsjustin.dotcloud.com/handlecmd/getcmd/'
+ID_RSA_PUB = 'http://ha.wujianguo.org/static/key/id_rsa.pub'
+GET_CMD_URL = 'http://ha.wujianguo.org/recvcmd'
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
@@ -40,7 +40,7 @@ APP_KEY=''
 APP_SECRET=''
 ACCESS_TYPE=''
 
-USER_EMAIL = ''
+USER_EMAIL = 'lsjustin89@gmail.com'
 USER_PRIVKEY_PATH = os.path.join(ROOT_DIR,'id_rsa')
 import datetime
 REQUESTS_TIME = datetime.timedelta(seconds=5)

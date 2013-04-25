@@ -38,6 +38,8 @@ class HomeAuth():
             privkey = RSA.importKey(f.read())
         sig = Crypto.Random.new().read(16)
         info = str(len(self.email))+self.email+sig
+        if len(self.email) < 10:
+            info = '0' + info
         signature = privkey.sign(sig,'')
         encinfo = pubkey.encrypt(info,32)
         para=({'signature':repr(signature),'userinfo':repr(encinfo)})
@@ -69,6 +71,7 @@ class HomeAuth():
                 except:
                     for i in self.cmdpro:
                         self.cmdpro[i].terminate()
+                    break
 def main():
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
     h = HomeAuth(USER_PRIVKEY_PATH, USER_EMAIL.strip())

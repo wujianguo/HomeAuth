@@ -16,6 +16,10 @@ handlers:
   script: pubkey.app
   login: required
 
+- url: /newcmd
+  script: newcmd.app
+  login: required
+
 - url: /recvcmd
   script: recvcmd.app
 

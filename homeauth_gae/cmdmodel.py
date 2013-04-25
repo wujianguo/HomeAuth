@@ -1,10 +1,11 @@
 from google.appengine.ext import db
-
-class PubKeys(db.Model):
+import datetime
+class CmdInfos(db.Model):
     user = db.UserProperty()
-    cmdline = db.StringListProperty()
-    client_state = db.TextProperty()
-    help_msg = db.TextProperty()
-    new_cmd = db.BooleanProperty(default=False)
-    last_recvcmd_time = db.DateTimeProperty()
-    last_getcmd_time = db.DateTimeProperty()
+    oldcmd = db.StringListProperty(default=[])
+    newcmd = db.StringListProperty(default=[])
+    client_state = db.TextProperty(default='')
+    help_msg = db.TextProperty(default='')
+#    new_cmd = db.BooleanProperty(default=False)
+    last_recvcmd_time = db.DateTimeProperty(default=datetime.datetime.utcnow())
+    last_getcmd_time = db.DateTimeProperty(default=datetime.datetime.utcnow())
