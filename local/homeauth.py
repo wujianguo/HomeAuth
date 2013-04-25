@@ -57,13 +57,14 @@ class HomeAuth():
                 self.log.error(data)
                 t = REQUESTS_TIME.total_seconds() + t
             else:
-                if cmd['err'] == 'ok' and cmd['response']['new'] == True:
+                if cmd['err'] == 'ok':
                     self.log.info(cmd['response']['cmdline'])
-                    cmdline = cmd['response']['cmdline'].strip().split()
-                    try:
-                        self.cmdpro[cmdline[0]].runCmd(cmdline[1:])
-                    except Exception,data:
-                        self.log.error(data)
+                    for c in cmd['response']['newcmd']:
+                        cmdline = c.strip().split()
+                        try:
+                            self.cmdpro[cmdline[0]].runCmd(cmdline[1:])
+                        except Exception,data:
+                            self.log.error(data)
                 t = REQUESTS_TIME.total_seconds()
             finally:
                 try:
