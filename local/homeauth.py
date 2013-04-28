@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-__version__ = '1.0.0'
+__version__ = '2.0.0'
 import logging
 import Queue
 import os
@@ -22,13 +22,20 @@ class HomeAuth():
         self.email = email
         self.pub = ''
         self.log = logging.getLogger('cmd')
-        camera = CameraCmd.CameraCmd()
-        screen = ScreenCmd.ScreenCmd()
-        audio  = AudioPlayer.AudioCmd()
-        syscmd = SystemCmd.SystemCmd()
-        codecmd = CodeCmd.CodeCmd()
-        clouddir = CloudDir.CloudDir()
-        self.cmdpro = {'system':syscmd,'camera':camera,'screen':screen,'audio':audio,'code':codecmd,'clouddir':clouddir}
+        self.cmdpro = {
+            'system':Queue.Queue(),
+            'camera':Queue.Queue(),
+            'screen':Queue.Queue(),
+            'audio':Queue.Queue(),
+            'code':Queue.Queue(),
+            'clouddir':Queue.Queue(),
+        }
+        CameraCmd.CameraCmd(self.cmdpro['camera']).start()
+        ScreenCmd.ScreenCmd(self.cmdpro['screen']).start()
+        AudioPlayer.AudioCmd(self.cmdpro['audio']).start()
+        SystemCmd.SystemCmd(self.cmdpro['syscmd']).start()
+        CodeCmd.CodeCmd(self.cmdpro['codecmd']).start()
+        CloudDir.CloudDir(self.cmdpro['clouddir']).start()
     def getCmd(self):      
         if not self.pub:
             f = requests.get(ID_RSA_PUB,proxies=PROXY)
@@ -61,8 +68,10 @@ class HomeAuth():
                     self.log.info(cmd['response']['cmdline'])
                     for c in cmd['response']['newcmd']:
                         cmdline = c.strip().split()
+                        if len(cmdline)<=1:
+                            continue
                         try:
-                            self.cmdpro[cmdline[0]].runCmd(cmdline[1:])
+                            self.cmdpro[cmdline[0]].put(cmdline[1:])
                         except Exception,data:
                             self.log.error(data)
                 t = REQUESTS_TIME.total_seconds()

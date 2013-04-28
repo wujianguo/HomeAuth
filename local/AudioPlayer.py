@@ -66,32 +66,33 @@ class DoubanFM():
         for channel in self.channels:
             log.info('%d\t%s\t%s'%(channel['channel_id'],channel['name'],channel['name_en']))
 class MusicPlayer(threading.Thread):
-    def __init__(self,songnum,email='',passwd=''):
-        super(MusicPlayer, self).__init__()
+    def __init__(self,songnum):
+        super(MusicPlayer, self).__init__(cmd_queue)
         self.doubanFM = DoubanFM()
         self.cancelplay = False
-        try:
-            self.songnum = int(songnum)
-        except Exception,data:
-            log.error(data)
-            self.songnum = 1
         self.pro = None
-        if email and passwd:
-            if self.doubanFM.login(email,passwd):
-                self.doubanFM.changeChannel(0)
+        self.cmd_queue = cmd_queue
     def run(self):
-        self.playSongs(self.songnum)
+        while True:
+            cmd = self.cmd_queue.get()
+            log.debug(cmd)
+            optlist,args = getopt.getopt(cmd,'p:s')
+            for o,v in optlist:
+                if o == '-p':
+                    try:
+                        self.playSongs(int(v))
+                    except Exception,data:
+                        log.error(data)
+                if o == '-s':
+                    self.cancelplaying()
     def playSongs(self,songnum):
         if songnum < 0:
             return
-        playalways = False
-        if songnum == 0:
-            playalways = True
         while True:
             song = self.doubanFM.playSong()
             self.playing(song['url'])
             songnum = songnum - 1
-            if (not playalways and songnum == 0) or self.cancelplay:
+            if songnum == 0 or self.cancelplay:
                 break
         self.cancelplay = False
     def playing(self,url):
