@@ -1,14 +1,20 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-import getopt
+import getopt,threading,Queue
 import subprocess
 import requests
 import logging
 from settings import *
 log = logging.getLogger('code')
-class CodeCmd():
+class CodeCmd(threading.Thread):
+    cmdqueue = Queue.Queue()
+    terminate_flag = False
     def __init__(self):
-        pass
+        super(CodeCmd, self).__init__()
+    def run(self):
+        while not terminate_flag:
+            cmd = CodeCmd.cmdqueue.get()
+            self.runCmd(cmd)
     def runCmd(self,cmd):
         logging.debug(cmd)
         optlist,args = getopt.getopt(cmd,'u:')
@@ -21,4 +27,4 @@ class CodeCmd():
                 cmd = ['python',p]
                 pro = subprocess.Popen(cmd)
     def terminate(self):
-        pass
+        CodeCmd.terminate_flag = True

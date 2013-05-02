@@ -3,31 +3,41 @@
 from dropbox import client,rest,session
 from datetime import datetime
 import webbrowser,sys,time,tempfile,logging,os
-import getopt,random,string
+import getopt,random,string,Queue,threading,collections
 from settings import *
 stdlog = logging.getLogger('clouddir')
 import MySmtp
-class CloudDir():
+class CloudDir(threading.Thread):
+    terminate_flag = False
+    cmdqueue = Queue.Queue()
     sess = None
     cl = None
     request_token = None
     id = ''
     screen = '/screen'
     camera = '/camera'
+    wait_files = collections.deque()
     def __init__(self):
-        pass
+        super(CloudDir, self).__init__()
+    def run(self):
+        while not terminate_flag:
+            cmd = CloudDir.cmdqueue.get()
+            self.runCmd(cmd)
     def reset(self):
         CloudDir.sess = None
         CloudDir.cl = None
         CloudDir.request_token = None
         CloudDir.id = ''
     def runCmd(self,cmd):
-        optlist,args = getopt.getopt(cmd,'i:s')
+        optlist,args = getopt.getopt(cmd,'i:sf')
         for o,v in optlist:
             if o=='-i':
                 self.notify_authorize(v)
             if o=='-s':
                 self.authorize()
+            if o=='-f' and len(CloudDir.wait_files) > 0:
+                localfile,cloudfile = CloudDir.wait_files.popleft()
+                CloudDir.saveFile(localfile,cloudfile)
     @staticmethod
     def saveFile(localfile,cloudfile):
         cloudfile = cloudfile.replace('\\','/')
@@ -92,5 +102,5 @@ class CloudDir():
         return 1.0*usedbytes/quota
     @staticmethod
     def terminate():
-        pass
+        CloudDir.terminate_flag = True
         

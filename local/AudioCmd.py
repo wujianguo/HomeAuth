@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 import requests
-import getopt,logging
+import getopt,logging,Queue
 import threading,subprocess
 from settings import *
 log = logging.getLogger('audio')
@@ -70,11 +70,7 @@ class MusicPlayer(threading.Thread):
         super(MusicPlayer, self).__init__()
         self.doubanFM = DoubanFM()
         self.cancelplay = False
-        try:
-            self.songnum = int(songnum)
-        except Exception,data:
-            log.error(data)
-            self.songnum = 1
+        self.songnum = songnum
         self.pro = None
         if email and passwd:
             if self.doubanFM.login(email,passwd):
@@ -84,14 +80,11 @@ class MusicPlayer(threading.Thread):
     def playSongs(self,songnum):
         if songnum < 0:
             return
-        playalways = False
-        if songnum == 0:
-            playalways = True
         while True:
             song = self.doubanFM.playSong()
             self.playing(song['url'])
             songnum = songnum - 1
-            if (not playalways and songnum == 0) or self.cancelplay:
+            if songnum == 0 or self.cancelplay:
                 break
         self.cancelplay = False
     def playing(self,url):
@@ -107,22 +100,34 @@ class MusicPlayer(threading.Thread):
         self.cancelplay = True
         if self.pro and self.pro.returncode is None:
             self.pro.terminate()
-class AudioCmd():
+class AudioCmd(threading.Thread):
+    cmdqueue = Queue.Queue()
+    music_player = None
+    terminate_flag = False
     def __init__(self):
-        self.music_player = None
-    def runCmd(self,cmd):
-        log.debug(cmd)       
+        super(AudioCmd, self).__init__()
+    def run(self):
+        while not AudioCmd.terminate_flag:
+            cmd = AudioCmd.cmdqueue.get()
+            AudioCmd.runCmd(cmd)
+    @staticmethod
+    def isPlaying():
+        return AudioCmd.music_player is not None and AudioCmd.music_player.isAlive()
+    @staticmethod
+    def runCmd(cmd):
+        log.debug(cmd)
         optlist,args = getopt.getopt(cmd,'p:s')
         for o,v in optlist:
-            if o == '-p':
-                if self.music_player is None or not self.music_player.isAlive():
-                    try:
-                        self.music_player = MusicPlayer(v)
-                        self.music_player.start()
-                    except Exception,data:
-                        log.error(data)
+            if o == '-p' and not AudioCmd.isPlaying():
+                try:
+                    AudioCmd.music_player = MusicPlayer(int(v))
+                    AudioCmd.music_player.start()
+                except Exception,data:
+                    log.error(data)
             if o == '-s':
-                self.terminate()
+                AudioCmd.terminate()
+    @staticmethod
     def terminate(self):
-        if self.music_player is not None and self.music_player.isAlive():
-            self.music_player.cancelplaying()
+        if AudioCmd.isPlaying():
+            AudioCmd.music_player.cancelplaying()
+        AudioCmd.terminate_flag = True
