@@ -23,7 +23,6 @@ class ScreenCmd(threading.Thread):
         p = self.takeAShot()
         if p:
             CloudDir.CloudDir.wait_files.append((p,os.path.join(CloudDir.CloudDir.screen,os.path.basename(p))))
-            CloudDir.CloudDir.cmdqueue.put('-f')
     def takeAShot(self):
         if grab:
             img = grab()

@@ -21,6 +21,10 @@ class CloudDir(threading.Thread):
         super(CloudDir, self).__init__()
     def run(self):
         while not terminate_flag:
+            if CloudDir.cmdqueue.empty() and CloudDir.cl and len(CloudDir.wait_files)>0:
+                localfile,cloudfile = CloudDir.wait_files.popleft()
+                CloudDir.saveFile(localfile,cloudfile)
+                continue
             cmd = CloudDir.cmdqueue.get()
             self.runCmd(cmd)
     def reset(self):
@@ -35,9 +39,6 @@ class CloudDir(threading.Thread):
                 self.notify_authorize(v)
             if o=='-s':
                 self.authorize()
-            if o=='-f' and len(CloudDir.wait_files) > 0:
-                localfile,cloudfile = CloudDir.wait_files.popleft()
-                CloudDir.saveFile(localfile,cloudfile)
     @staticmethod
     def saveFile(localfile,cloudfile):
         cloudfile = cloudfile.replace('\\','/')
