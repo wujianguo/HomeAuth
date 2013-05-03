@@ -31,7 +31,7 @@ class HomeAuth():
             'clouddir':CloudDir.CloudDir,
         }
         for pro in self.cmdpro:
-            pro().start()
+            self.cmdpro[pro]().start()
     def getCmd(self):      
         if not self.pub:
             f = requests.get(ID_RSA_PUB,proxies=PROXY)
@@ -61,7 +61,7 @@ class HomeAuth():
                 t = REQUESTS_TIME.total_seconds() + t
             else:
                 if cmd['err'] == 'ok':
-                    self.log.info(cmd['response']['cmdline'])
+                    self.log.info(cmd['response']['newcmd'])
                     for c in cmd['response']['newcmd']:
                         cmdline = c.strip().split()
                         if len(cmdline)<=1:

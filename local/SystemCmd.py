@@ -1,8 +1,8 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-import os,threading
+import os,threading,Queue
 class SystemCmd(threading.Thread):
-	cmdqueue = Queue.Queue()
+    cmdqueue = Queue.Queue()
     terminate_flag = False
     def __init__(self):
         super(SystemCmd, self).__init__()

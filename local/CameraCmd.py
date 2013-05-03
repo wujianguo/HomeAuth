@@ -29,7 +29,7 @@ class Monitor(threading.Thread):
         time.sleep(10)
         self.close = False
         pic1 = self.takePhoto()
-        CloudDir.CloudDir.wait_files.append((pic1,os.path.join(CloudDir.CloudDir.camera,os.path.basename(pic1)))
+        CloudDir.CloudDir.wait_files.append((pic1,os.path.join(CloudDir.CloudDir.camera,os.path.basename(pic1))))
         while not self.close:
             time.sleep(INTERVALTIME)
             pic2 = self.takePhoto()

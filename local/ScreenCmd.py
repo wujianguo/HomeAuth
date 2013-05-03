@@ -31,5 +31,6 @@ class ScreenCmd(threading.Thread):
             img.save(img_path)
             return img_path
         return ''
-    def terminate(self):
+    @staticmethod
+    def terminate():
         ScreenCmd.terminate_flag = True
