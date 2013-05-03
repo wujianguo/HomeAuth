@@ -6,9 +6,10 @@ import time
 import os
 import HandlePics
 import CloudDir
-import AudioPlayer
+import AudioCmd
 import logging
 import getopt
+import Queue
 log = logging.getLogger('camera')
 try:
     import cv
@@ -28,7 +29,7 @@ class Monitor(threading.Thread):
         time.sleep(10)
         self.close = False
         pic1 = self.takePhoto()
-        CloudDir.CloudDir.saveFile(pic1,os.path.join(CloudDir.CloudDir.camera,os.path.basename(pic1)))
+        CloudDir.CloudDir.wait_files.append((pic1,os.path.join(CloudDir.CloudDir.camera,os.path.basename(pic1)))
         while not self.close:
             time.sleep(INTERVALTIME)
             pic2 = self.takePhoto()
@@ -37,7 +38,7 @@ class Monitor(threading.Thread):
             if s > SIMILARITYLIMIT:#same pictures
                 os.remove(pic2)
             else:
-                CloudDir.CloudDir.saveFile(pic2,os.path.join(CloudDir.CloudDir.camera,os.path.basename(pic2)))
+                CloudDir.CloudDir.wait_files.append((pic2,os.path.join(CloudDir.CloudDir.camera,os.path.basename(pic2))))
                 pic1 = pic2
                 AudioPlayer.AudioCmd.runCmd(['-p','1'])
         del(self.cam)
@@ -56,22 +57,34 @@ class Monitor(threading.Thread):
     def similarity(self,pic1,pic2):
         s = HandlePics.HandlePics().similarity(pic1,pic2)
         return s
-class CameraCmd():
+class CameraCmd(threading.Thread):
+    cmdqueue = Queue.Queue()
+    terminate_flag = False
+    monitor = None
     def __init__(self):
-        self.monitor = None
+        super(CameraCmd, self).__init__()
+    def run(self):
+        CameraCmd.terminate_flag = False
+        while not CameraCmd.terminate_flag:
+            cmd = CameraCmd.cmdqueue.get()
+            self.runCmd(cmd)
     def runCmd(self,cmd):
         log.debug(cmd)
         optlist,args = getopt.getopt(cmd,'cs')
         for o,v in optlist:
-            if o == '-c':
-                if not self.monitor or not self.monitor.isAlive():
-                    try:
-                        self.monitor = Monitor()
-                        self.monitor.start()
-                    except Exception,data:
-                        log.error(data)
+            if o == '-c' and not CameraCmd.isCameraing():
+                try:
+                    CameraCmd.monitor = Monitor()
+                    CameraCmd.monitor.start()
+                except Exception,data:
+                    log.error(data)
             if o == '-s':
-                if self.monitor and self.monitor.isAlive():
-                    self.monitor.terminate()
-    def terminate(self):
-        self.runCmd(['-s',])
+                CameraCmd.terminate()
+    @staticmethod
+    def isCameraing():
+        return CameraCmd.monitor is not None and CameraCmd.monitor.isAlive()
+    @staticmethod
+    def terminate():
+        if CameraCmd.isCameraing():
+            CameraCmd.monitor.terminate()
+        CameraCmd.terminate_flag = True

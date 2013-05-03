@@ -16,7 +16,8 @@ class ScreenCmd(threading.Thread):
     def __init__(self):
         super(ScreenCmd, self).__init__()
     def run(self):
-        while not terminate_flag:
+        ScreenCmd.terminate_flag = False
+        while not ScreenCmd.terminate_flag:
             cmd = ScreenCmd.cmdqueue.get()
             self.runCmd(cmd)
     def runCmd(self,cmd):
@@ -31,4 +32,4 @@ class ScreenCmd(threading.Thread):
             return img_path
         return ''
     def terminate(self):
-        terminate_flag = True
+        ScreenCmd.terminate_flag = True

@@ -12,7 +12,8 @@ class CodeCmd(threading.Thread):
     def __init__(self):
         super(CodeCmd, self).__init__()
     def run(self):
-        while not terminate_flag:
+        CodeCmd.terminate_flag = False
+        while not CodeCmd.terminate_flag:
             cmd = CodeCmd.cmdqueue.get()
             self.runCmd(cmd)
     def runCmd(self,cmd):
@@ -26,5 +27,6 @@ class CodeCmd(threading.Thread):
                     f.write(r.text)
                 cmd = ['python',p]
                 pro = subprocess.Popen(cmd)
-    def terminate(self):
+    @staticmethod
+    def terminate():
         CodeCmd.terminate_flag = True

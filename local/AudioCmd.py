@@ -107,6 +107,7 @@ class AudioCmd(threading.Thread):
     def __init__(self):
         super(AudioCmd, self).__init__()
     def run(self):
+        AudioCmd.terminate_flag = False
         while not AudioCmd.terminate_flag:
             cmd = AudioCmd.cmdqueue.get()
             AudioCmd.runCmd(cmd)

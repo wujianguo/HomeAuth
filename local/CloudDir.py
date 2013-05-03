@@ -20,7 +20,8 @@ class CloudDir(threading.Thread):
     def __init__(self):
         super(CloudDir, self).__init__()
     def run(self):
-        while not terminate_flag:
+        CloudDir.terminate_flag = False
+        while not CloudDir.terminate_flag:
             if CloudDir.cmdqueue.empty() and CloudDir.cl and len(CloudDir.wait_files)>0:
                 localfile,cloudfile = CloudDir.wait_files.popleft()
                 CloudDir.saveFile(localfile,cloudfile)
