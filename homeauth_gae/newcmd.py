@@ -17,35 +17,29 @@ class MainPage(webapp2.RequestHandler):
             'cmd': None,
         }
 
-        curuser=db.GqlQuery("SELECT * FROM PubKeys WHERE user = :1",user)
-        userinfo=curuser.get()
-        if userinfo:
-            template_values.update({'key':userinfo})
+        curuser = db.GqlQuery("SELECT * FROM PubKeys WHERE user = :1",user)
+        if curuser:
             cmd = db.GqlQuery("SELECT * FROM CmdInfos WHERE user = :1",user)
-            cmd = cmd.get()
-            if cmd:
-                template_values.update({'cmd':cmd})
-            else:
-                cmd = cmdmodel.CmdInfos(user=user)
-                cmd.put()
+            cmd.order("-mtime")
+            template_values.update({'cmd':cmd})
         else:
             newuser = keymodel.PubKeys(pubkey='',user=user)
             newuser.put()
-            cmd = cmdmodel.CmdInfos(user=user)
-            cmd.put()
         template = JINJA_ENVIRONMENT.get_template('newcmd.html')
         self.response.write(template.render(template_values))
+
     def post(self):
     	user = users.get_current_user()
-    	cmd = db.GqlQuery("SELECT * FROM CmdInfos WHERE user = :1",user)
-        cmd = cmd.get()
-        if cmd:
-            cmd.newcmd.append(self.request.get('newcmd'))
-            cmd.last_recvcmd_time = datetime.datetime.utcnow()
-            cmd.put()
+        curuser = db.GqlQuery("SELECT * FROM PubKeys WHERE user = :1", user)
+        if not curuser:
+            newuser = keymodel.PubKeys(pubkey = '', user = user)
+            newuser.put()
+        newcmd = cmdmodel.CmdInfos(user = user, cmd = self.request.get('newcmd'),
+            mtime = datetime.datetime.utcnow(), new = True)
+        newcmd.put()
         template_values = {
             'user': user,
-            'cmd': cmd,
+            'cmd': newcmd,
         }
         template = JINJA_ENVIRONMENT.get_template('newcmd.html')
         self.response.write(template.render(template_values))
