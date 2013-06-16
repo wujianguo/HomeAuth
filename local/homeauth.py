@@ -51,12 +51,32 @@ class HomeAuth():
 #        self.log.debug(r.text)
         self.log.debug(r.json())
         return r.json()
+    def updateinfo(self,strkey):
+        if not self.pub:
+            f = requests.get(ID_RSA_PUB,proxies=PROXY)
+            self.pub = f.text
+        pubkey = RSA.importKey(self.pub)
+        with open(self.key_path) as f:
+            privkey = RSA.importKey(f.read())
+        sig = Crypto.Random.new().read(16)
+        info = str(len(self.email))+self.email+sig
+        if len(self.email) < 10:
+            info = '0' + info
+        signature = privkey.sign(sig,'')
+        encinfo = pubkey.encrypt(info,32)
+        para=({'signature':repr(signature),'userinfo':repr(encinfo),'key':strkey,'cmdinfo':'infos'})
+        urllib.urlencode(para)
+        r = requests.post(UPDATE_INFO_URL,data=para,proxies=PROXY,timeout=TIME_OUT)
+#        self.log.debug(r.text)
+        self.log.debug(r.json())
+        return r.json()
     def handleCmd(self):
         t = REQUESTS_TIME.total_seconds()
         self.log.debug(t)
         while True:
             cmd = self.getCmd()
-            self.log.info(cmd)
+            self.updateinfo(cmd['response'][0]['key'])
+#            self.log.info(cmd)
             time.sleep(3)
             continue
             try:
@@ -67,6 +87,7 @@ class HomeAuth():
             else:
                 if cmd['err'] == 'ok':
                     self.log.info(cmd)
+                    self.updateinfo(cmd['response'][0])
                     continue
                     self.log.info(cmd['response']['newcmd'])
                     for c in cmd['response']['newcmd']:

@@ -6,8 +6,7 @@
 {% block content %}
 <h2 align="center">new cmd</h2>
 	{% for c in cmd %}
-		{{c.etime}}<br>
-		{{c.cmd}}<br>
+		<p>{{c.etime}}$:{{c.cmd}}<br>{{c.info}}</p>
 		{% endfor %}
         <form action="/newcmd" method="post">
 			<input type="text" name="newcmd" />

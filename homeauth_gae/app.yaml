@@ -23,6 +23,9 @@ handlers:
 - url: /recvcmd
   script: recvcmd.app
 
+- url: /updateinfo
+  script: updateinfo.app
+
 libraries:
 - name: pycrypto
   version: latest

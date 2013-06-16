@@ -25,6 +25,11 @@ PROXY_PAWD = ''
 #serveurls
 ID_RSA_PUB = 'http://ha.wujianguo.org/static/key/id_rsa.pub'
 GET_CMD_URL = 'http://ha.wujianguo.org/recvcmd'
+UPDATE_INFO_URL = 'http://ha.wujianguo.org/updateinfo'
+
+#ID_RSA_PUB = 'http://localhost:8080/static/key/id_rsa.pub'
+#GET_CMD_URL = 'http://localhost:8080/recvcmd'
+
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
