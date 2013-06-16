@@ -7,7 +7,8 @@ import keymodel,cmdmodel
 class MainPage(webapp2.RequestHandler):
     def post(self):
         self.response.headers['Content-Type'] = 'application/json'
-        rescmd = {'recvtime':None,'newcmd':[],'oldcmd':[]}
+#        rescmd = {'recvtime':None,'newcmd':[],'oldcmd':[]}
+        rescmd = []
         resmsg = {'err':'ok','response':rescmd}
         try:
             enctext=eval(self.request.get('signature'))
@@ -38,17 +39,17 @@ class MainPage(webapp2.RequestHandler):
         if userinfo:
             pubkey=RSA.importKey(userinfo.pubkey)
             if pubkey.verify(msg,enctext):
-                cmd = db.GqlQuery("SELECT * FROM CmdInfos WHERE user = :1",user)
-                cmd = cmd.get()
-                if cmd:
-                    rescmd['newcmd'] = cmd.newcmd
-                    rescmd['oldcmd'] = cmd.oldcmd
-                    rescmd['recvtime'] = cmd.last_recvcmd_time.strftime("%Y-%m-%d %H:%M:%S")
-                    resmsg['response'] = rescmd
-                    cmd.oldcmd.extend(cmd.newcmd)
-                    cmd.newcmd = []
-                    cmd.last_getcmd_time = datetime.datetime.utcnow()
-                    cmd.put()
+                cmd = db.GqlQuery("SELECT * FROM CmdInfos WHERE user = :1 ORDER BY mtime",user)
+                for c in cmd:
+                    rescmd.append({'cmd':c.cmd, 
+                        'mtime':(c.mtime + datetime.timedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S"),
+                        'info':c.info,
+                        'new':c.new})
+                    if c.new:
+                        c.new = False
+                        c.etime = datetime.datetime.utcnow()
+                        c.put()
+                resmsg['response'] = rescmd
             else:
                 resmsg['err'] = 'invalid data'
         else:

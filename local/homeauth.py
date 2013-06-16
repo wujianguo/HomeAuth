@@ -30,8 +30,8 @@ class HomeAuth():
             'code':CodeCmd.CodeCmd,
             'clouddir':CloudDir.CloudDir,
         }
-        for pro in self.cmdpro:
-            self.cmdpro[pro]().start()
+#        for pro in self.cmdpro:
+#            self.cmdpro[pro]().start()
     def getCmd(self):      
         if not self.pub:
             f = requests.get(ID_RSA_PUB,proxies=PROXY)
@@ -48,12 +48,17 @@ class HomeAuth():
         para=({'signature':repr(signature),'userinfo':repr(encinfo)})
         urllib.urlencode(para)
         r = requests.post(GET_CMD_URL,data=para,proxies=PROXY,timeout=TIME_OUT)
+#        self.log.debug(r.text)
         self.log.debug(r.json())
         return r.json()
     def handleCmd(self):
         t = REQUESTS_TIME.total_seconds()
         self.log.debug(t)
         while True:
+            cmd = self.getCmd()
+            self.log.info(cmd)
+            time.sleep(3)
+            continue
             try:
                 cmd = self.getCmd()
             except Exception,data:
@@ -61,6 +66,8 @@ class HomeAuth():
                 t = REQUESTS_TIME.total_seconds() + t
             else:
                 if cmd['err'] == 'ok':
+                    self.log.info(cmd)
+                    continue
                     self.log.info(cmd['response']['newcmd'])
                     for c in cmd['response']['newcmd']:
                         cmdline = c.strip().split()

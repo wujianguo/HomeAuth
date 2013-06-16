@@ -19,8 +19,8 @@ class MainPage(webapp2.RequestHandler):
 
         curuser = db.GqlQuery("SELECT * FROM PubKeys WHERE user = :1",user)
         if curuser:
-            cmd = db.GqlQuery("SELECT * FROM CmdInfos WHERE user = :1",user)
-            cmd.order("-mtime")
+            cmd = db.GqlQuery("SELECT * FROM CmdInfos WHERE user = :1 ORDER BY mtime",user)
+#            cmd.order("-mtime")
             template_values.update({'cmd':cmd})
         else:
             newuser = keymodel.PubKeys(pubkey='',user=user)
@@ -37,9 +37,10 @@ class MainPage(webapp2.RequestHandler):
         newcmd = cmdmodel.CmdInfos(user = user, cmd = self.request.get('newcmd'),
             mtime = datetime.datetime.utcnow(), new = True)
         newcmd.put()
+        cmd = db.GqlQuery("SELECT * FROM CmdInfos WHERE user = :1 ORDER BY mtime",user)
         template_values = {
             'user': user,
-            'cmd': newcmd,
+            'cmd': cmd,
         }
         template = JINJA_ENVIRONMENT.get_template('newcmd.html')
         self.response.write(template.render(template_values))

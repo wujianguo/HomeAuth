@@ -4,6 +4,7 @@ class CmdInfos(db.Model):
     user = db.UserProperty()
     cmd = db.StringProperty()
     mtime = db.DateTimeProperty(default = datetime.datetime.utcnow())
+    etime = db.DateTimeProperty(default = datetime.datetime.utcnow())
     info = db.TextProperty(default = '')
     new = db.BooleanProperty(default = False)
 

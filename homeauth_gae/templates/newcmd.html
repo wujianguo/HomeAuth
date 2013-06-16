@@ -4,9 +4,11 @@
 {% block title %}Handle Cmd{% endblock %}
 
 {% block content %}
-<h2 align="center">new cmd</h1>
-		{{cmd.oldcmd}}<br>
-        {{cmd.newcmd}}<br>
+<h2 align="center">new cmd</h2>
+	{% for c in cmd %}
+		{{c.etime}}<br>
+		{{c.cmd}}<br>
+		{% endfor %}
         <form action="/newcmd" method="post">
 			<input type="text" name="newcmd" />
 			<input type="submit" value="Submit" />
