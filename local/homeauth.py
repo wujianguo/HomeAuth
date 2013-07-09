@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 __version__ = '2.0.0'
@@ -106,6 +106,9 @@ class HomeAuth():
                     for i in self.cmdpro:
                         self.cmdpro[i].terminate()
                     break
+
+                    
+        
 def main():
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
     h = HomeAuth(USER_PRIVKEY_PATH, USER_EMAIL.strip())
