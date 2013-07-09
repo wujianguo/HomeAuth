@@ -1,5 +1,6 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
 from dropbox import client,rest,session
 from datetime import datetime
 import webbrowser,sys,time,tempfile,logging,os
@@ -26,8 +27,12 @@ class CloudDir(threading.Thread):
                 localfile,cloudfile = CloudDir.wait_files.popleft()
                 CloudDir.saveFile(localfile,cloudfile)
                 continue
-            cmd = CloudDir.cmdqueue.get()
-            self.runCmd(cmd)
+            try:
+                cmd = CloudDir.cmdqueue.get(True, 0.1)
+            except Queue.Empty:
+                pass
+            else:
+                self.runCmd(cmd)
     def reset(self):
         CloudDir.sess = None
         CloudDir.cl = None
@@ -106,3 +111,25 @@ class CloudDir(threading.Thread):
     def terminate():
         CloudDir.terminate_flag = True
         
+
+class CloudDir2(threading.Thread):
+    cmdqueue = Queue.Queue()
+    sess = None
+    cl = None
+    request_token = None
+    screen = '/screen'
+    camera = '/camera'
+    wait_files = collections.deque()
+    close_event = threading.Event()
+    terminate_event = threading.Event()
+    def __init__(self):
+        super(CloudDir2, self).__init__()
+    def run(self):
+        pass
+    @staticmethod
+    def addTask():
+        pass
+    def close(self):
+        CloudDir2.close_event.set()
+    def terminate(self):
+        CloudDir2.terminate_event.set()

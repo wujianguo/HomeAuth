@@ -1,5 +1,6 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
 import requests
 import getopt,logging,Queue
 import threading,subprocess
@@ -103,32 +104,44 @@ class MusicPlayer(threading.Thread):
 class AudioCmd(threading.Thread):
     cmdqueue = Queue.Queue()
     music_player = None
-    terminate_flag = False
+    close_event = threading.Event()
+    terminate_event = threading.Event()
     def __init__(self):
         super(AudioCmd, self).__init__()
     def run(self):
-        AudioCmd.terminate_flag = False
-        while not AudioCmd.terminate_flag:
-            cmd = AudioCmd.cmdqueue.get()
-            AudioCmd.runCmd(cmd)
-    @staticmethod
-    def isPlaying():
-        return AudioCmd.music_player is not None and AudioCmd.music_player.isAlive()
-    @staticmethod
-    def runCmd(cmd):
+        while not AudioCmd.terminate_event.isSet():
+            try:
+                cmd = AudioCmd.cmdqueue.get(True, 0.1)
+            except Queue.Empty:
+                if AudioCmd.close_event.isSet():
+                    break
+            else:
+                try:
+                    self.runCmd(cmd)
+                except Exception as e:
+                    log.error(e)
+    def runCmd(self.cmd):
         log.debug(cmd)
         optlist,args = getopt.getopt(cmd,'p:s')
         for o,v in optlist:
-            if o == '-p' and not AudioCmd.isPlaying():
+            if o == '-p' and not self.isPlaying():
                 try:
                     AudioCmd.music_player = MusicPlayer(int(v))
                     AudioCmd.music_player.start()
                 except Exception,data:
                     log.error(data)
             if o == '-s':
-                AudioCmd.terminate()
+                self.stopPlay()
+
     @staticmethod
-    def terminate(self):
-        if AudioCmd.isPlaying():
+    def addTask(cmd):
+        AudioCmd.cmdqueue.put(cmd)
+    def isPlaying(self):
+        return AudioCmd.music_player is not None and AudioCmd.music_player.isAlive()
+    def stopPlay(self):
+        if self.isPlaying():
             AudioCmd.music_player.cancelplaying()
-        AudioCmd.terminate_flag = True
+    def close(self):
+        AudioCmd.close_event.set()
+    def terminate(self):
+        AudioCmd.terminate_event.set()

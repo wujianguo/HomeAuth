@@ -1,5 +1,6 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
 import getopt,threading,Queue
 import subprocess
 import requests
@@ -8,14 +9,23 @@ from settings import *
 log = logging.getLogger('code')
 class CodeCmd(threading.Thread):
     cmdqueue = Queue.Queue()
-    terminate_flag = False
+    # music_player = None
+    close_event = threading.Event()
+    terminate_event = threading.Event()
     def __init__(self):
         super(CodeCmd, self).__init__()
     def run(self):
-        CodeCmd.terminate_flag = False
-        while not CodeCmd.terminate_flag:
-            cmd = CodeCmd.cmdqueue.get()
-            self.runCmd(cmd)
+        while not CodeCmd.terminate_event.isSet():
+            try:
+                cmd = CodeCmd.cmdqueue.get(True, 0.1)
+            except Queue.Empty:
+                if CodeCmd.close_event.isSet():
+                    break
+            else:
+                try:
+                    self.runCmd(cmd)
+                except Exception as e:
+                    log.error(e)
     def runCmd(self,cmd):
         logging.debug(cmd)
         optlist,args = getopt.getopt(cmd,'u:')
@@ -28,5 +38,9 @@ class CodeCmd(threading.Thread):
                 cmd = ['python',p]
                 pro = subprocess.Popen(cmd)
     @staticmethod
-    def terminate():
-        CodeCmd.terminate_flag = True
+    def addTask(cmd):
+        CodeCmd.cmdqueue.put(cmd)
+    def close(self):
+        CodeCmd.close_event.set()
+    def terminate(self):
+        CodeCmd.terminate_event.set()

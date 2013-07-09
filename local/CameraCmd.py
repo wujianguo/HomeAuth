@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 import threading
@@ -59,32 +59,44 @@ class Monitor(threading.Thread):
         return s
 class CameraCmd(threading.Thread):
     cmdqueue = Queue.Queue()
-    terminate_flag = False
     monitor = None
+    close_event = threading.Event()
+    terminate_event = threading.Event()
     def __init__(self):
         super(CameraCmd, self).__init__()
     def run(self):
-        CameraCmd.terminate_flag = False
-        while not CameraCmd.terminate_flag:
-            cmd = CameraCmd.cmdqueue.get()
-            self.runCmd(cmd)
+         while not CameraCmd.terminate_event.isSet():
+            try:
+                cmd = CameraCmd.cmdqueue.get(True, 0.1)
+            except Queue.Empty:
+                if CameraCmd.close_event.isSet():
+                    break
+            else:
+                try:
+                    self.runCmd(cmd)
+                except Exception as e:
+                    log.error(e)
     def runCmd(self,cmd):
         log.debug(cmd)
         optlist,args = getopt.getopt(cmd,'cs')
         for o,v in optlist:
-            if o == '-c' and not CameraCmd.isCameraing():
+            if o == '-c' and not self.isCameraing():
                 try:
                     CameraCmd.monitor = Monitor()
                     CameraCmd.monitor.start()
                 except Exception,data:
                     log.error(data)
             if o == '-s':
-                CameraCmd.terminate()
-    @staticmethod
-    def isCameraing():
+                self.stopCamera()
+    def isCameraing(self):
         return CameraCmd.monitor is not None and CameraCmd.monitor.isAlive()
-    @staticmethod
-    def terminate():
-        if CameraCmd.isCameraing():
+    def stopCamera(self):
+        if self.isCameraing():
             CameraCmd.monitor.terminate()
-        CameraCmd.terminate_flag = True
+    @staticmethod
+    def addTask(cmd):
+        CameraCmd.cmdqueue.put(cmd)
+    def close(self):
+        CameraCmd.close_event.set()
+    def terminate(self):
+        CameraCmd.terminate_event.set()
