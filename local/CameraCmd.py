@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 import threading
@@ -66,8 +66,14 @@ class CameraCmd(threading.Thread):
     def run(self):
         CameraCmd.terminate_flag = False
         while not CameraCmd.terminate_flag:
-            cmd = CameraCmd.cmdqueue.get()
-            self.runCmd(cmd)
+            # cmd = CameraCmd.cmdqueue.get()
+            # self.runCmd(cmd)
+            try:
+                cmd = CameraCmd.cmdqueue.get(True, 0.1)
+            except Queue.Empty:
+                pass
+            else:
+                self.runCmd(cmd)
     def runCmd(self,cmd):
         log.debug(cmd)
         optlist,args = getopt.getopt(cmd,'cs')

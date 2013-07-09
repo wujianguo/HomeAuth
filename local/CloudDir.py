@@ -1,5 +1,6 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
 from dropbox import client,rest,session
 from datetime import datetime
 import webbrowser,sys,time,tempfile,logging,os
@@ -26,8 +27,12 @@ class CloudDir(threading.Thread):
                 localfile,cloudfile = CloudDir.wait_files.popleft()
                 CloudDir.saveFile(localfile,cloudfile)
                 continue
-            cmd = CloudDir.cmdqueue.get()
-            self.runCmd(cmd)
+            try:
+                cmd = CloudDir.cmdqueue.get(True, 0.1)
+            except Queue.Empty:
+                pass
+            else:
+                self.runCmd(cmd)
     def reset(self):
         CloudDir.sess = None
         CloudDir.cl = None

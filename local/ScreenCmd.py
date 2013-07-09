@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 import getopt,Queue,threading
@@ -18,8 +18,12 @@ class ScreenCmd(threading.Thread):
     def run(self):
         ScreenCmd.terminate_flag = False
         while not ScreenCmd.terminate_flag:
-            cmd = ScreenCmd.cmdqueue.get()
-            self.runCmd(cmd)
+            try:
+                cmd = ScreenCmd.cmdqueue.get(True, 0.1)
+            except Queue.Empty:
+                pass
+            else:
+                self.runCmd(cmd)
     def runCmd(self,cmd):
         p = self.takeAShot()
         if p:

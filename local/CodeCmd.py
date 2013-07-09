@@ -1,5 +1,6 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
 import getopt,threading,Queue
 import subprocess
 import requests
@@ -14,8 +15,12 @@ class CodeCmd(threading.Thread):
     def run(self):
         CodeCmd.terminate_flag = False
         while not CodeCmd.terminate_flag:
-            cmd = CodeCmd.cmdqueue.get()
-            self.runCmd(cmd)
+            try:
+                cmd = CodeCmd.cmdqueue.get(True, 0.1)
+            except Queue.Empty:
+                pass
+            else:
+                self.runCmd(cmd)
     def runCmd(self,cmd):
         logging.debug(cmd)
         optlist,args = getopt.getopt(cmd,'u:')

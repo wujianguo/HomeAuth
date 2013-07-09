@@ -1,5 +1,6 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
 import requests
 import getopt,logging,Queue
 import threading,subprocess
@@ -109,8 +110,12 @@ class AudioCmd(threading.Thread):
     def run(self):
         AudioCmd.terminate_flag = False
         while not AudioCmd.terminate_flag:
-            cmd = AudioCmd.cmdqueue.get()
-            AudioCmd.runCmd(cmd)
+            try:
+                cmd = AudioCmd.cmdqueue.get(True, 0.1)
+            except Queue.Empty:
+                pass
+            else:
+                AudioCmd.runCmd(cmd)
     @staticmethod
     def isPlaying():
         return AudioCmd.music_player is not None and AudioCmd.music_player.isAlive()
